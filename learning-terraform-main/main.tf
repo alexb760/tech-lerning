@@ -14,7 +14,7 @@ data "aws_ami" "app_ami" {
   owners = ["979382823631"] # Bitnami
 }
 
-resource "aws_instance" "web" {
+resource "aws_instance" "blog" {
   ami           = data.aws_ami.app_ami.id
   instance_type = var.instance_type
 
@@ -51,4 +51,38 @@ module "blog_sg" {
   ingress_cidr_blocks = ["0.0.0.0/0"]
   egress_rules        = ["all-all"]
   egress_cidr_blocks  = ["0.0.0.0/0"]
+}
+
+module "alb" {
+  source = "terraform-aws-modules/alb/aws"
+
+  name    = "blog-alb"
+  vpc_id  = module.blog_vpc.vpc_id
+  subnets = module.blog_vpc.subnets
+
+  # Security Group
+  security_groups  = module.blog_sg.security_group.id
+
+  target_groups = {
+    ex-instance = {
+      name_prefix      = "blog-"
+      protocol         = "HTTP"
+      port             = 80
+      target_type      = "instance"
+      target_id        = aws_instance.blog.id
+    }
+  }
+
+  http_tcp_listeners = [
+    {
+      target_group_index = 0
+      port               = 80
+      protocol           = "HTTP"
+    }
+  ]
+
+  tags = {
+    Environment = "Development"
+    Project     = "Example"
+  }
 }

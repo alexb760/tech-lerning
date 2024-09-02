@@ -45,7 +45,7 @@ module "blog_vpc" {
 }
 
 module "blog_sg" {
-  source   = "terraform-aws-module/security-group/aws"
+  source   = "terraform-aws-modules/security-group/aws"
   version  = "4.13.0"
 
   vpc_id              = module.blog_vpc.vpc_id

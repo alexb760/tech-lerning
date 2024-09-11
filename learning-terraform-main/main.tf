@@ -77,9 +77,9 @@ module "alb" {
     http = {
       port     = 80
       protocol = "HTTP"
-      default_action = {
+      default_action {
         type = "forward"
-        target_group_key   = "ex-instance"
+        target_group_arn = aws_lb_target_group.example.arn
       }
     }
   }

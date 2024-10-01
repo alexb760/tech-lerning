@@ -32,7 +32,7 @@ module "blog_autoscaling" {
 module "blog_vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = var.environment.dev
+  name = var.environment.env
   cidr = "${var.environment.net_prefix}.0.0/16"
 
   azs             = ["us-east-1a", "us-east-1b", "us-east-1c"]
@@ -45,7 +45,7 @@ module "blog_vpc" {
 
   tags = {
     Terraform = "true"
-    Environment = var.environment.dev
+    Environment = var.environment.env
   }
 }
 
@@ -79,7 +79,7 @@ module "blog_alb" {
   ]
 
   tags = {
-    Environment = "dev"
+    Environment = var.environment.dev
   }
 }
 
